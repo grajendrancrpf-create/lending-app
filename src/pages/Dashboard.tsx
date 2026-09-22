@@ -85,6 +85,12 @@ export default function Dashboard() {
               </span>
               EMI calculator
             </Link>
+            <Link to="/moi/new" className="quick-action">
+              <span className="dot-ico tint-white">
+                <Icon d={ICONS.gift} />
+              </span>
+              MOI entry
+            </Link>
           </div>
 
           {/* portfolio breakdown */}

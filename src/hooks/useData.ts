@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { db } from '../lib/supabase';
-import type { Loan, LedgerEntry } from '../types';
+import type { Loan, LedgerEntry, MoiEntry } from '../types';
 
 export function useLoans() {
   const [loans, setLoans] = useState<Loan[]>([]);
@@ -98,4 +98,48 @@ export function useActivityFeed() {
   }, [refresh]);
 
   return { entries, loading, refresh };
+}
+
+export function useMoiEntries() {
+  const [moiEntries, setMoiEntries] = useState<MoiEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await db()
+      .from('moi_entries')
+      .select('*')
+      .order('entry_date', { ascending: false })
+      .order('created_at', { ascending: false });
+    if (!error && data) setMoiEntries(data as MoiEntry[]);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  return { moiEntries, loading, refresh };
+}
+
+export function useMoiEntry(id: string | undefined) {
+  const [entry, setEntry] = useState<MoiEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const { data } = await db().from('moi_entries').select('*').eq('id', id).maybeSingle();
+    setEntry((data as MoiEntry | null) ?? null);
+    setLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  return { entry, loading, refresh };
 }

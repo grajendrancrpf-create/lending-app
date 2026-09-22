@@ -8,6 +8,8 @@ import Loans from './pages/Loans';
 import LoanForm from './pages/LoanForm';
 import LoanDetail from './pages/LoanDetail';
 import LedgerForm from './pages/LedgerForm';
+import Moi from './pages/Moi';
+import MoiForm from './pages/MoiForm';
 import Activity from './pages/Activity';
 import Settings from './pages/Settings';
 import Calculator from './pages/Calculator';
@@ -73,6 +75,9 @@ export default function App() {
             <Route path="loans/:id/edit" element={<LoanForm />} />
             <Route path="loans/:id/ledger/new" element={<LedgerForm />} />
             <Route path="loans/:id/ledger/:entryId/edit" element={<LedgerForm />} />
+            <Route path="moi" element={<Moi />} />
+            <Route path="moi/new" element={<MoiForm />} />
+            <Route path="moi/:id/edit" element={<MoiForm />} />
             <Route path="activity" element={<Activity />} />
             <Route path="settings" element={<Settings />} />
             <Route path="calculator" element={<Calculator />} />

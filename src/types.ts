@@ -71,3 +71,39 @@ export const ENTRY_TYPE_LABELS: Record<EntryType, string> = {
   charge: 'Charge',
   adjustment: 'Adjustment',
 };
+
+/* ---------------- MOI (family occasion gifts) ---------------- */
+export type MoiOccasionType =
+  | 'marriage'
+  | 'engagement'
+  | 'housewarming'
+  | 'ear_piercing'
+  | 'baby_shower'
+  | 'puberty_ceremony'
+  | 'funeral'
+  | 'birthday'
+  | 'other';
+
+export interface MoiEntry {
+  id: string;
+  user_id: string;
+  family_name: string;
+  occasion_type: MoiOccasionType;
+  occasion_of: string | null;
+  amount: number;
+  entry_date: string;
+  notes: string | null;
+  created_at: string;
+}
+
+export const MOI_OCCASION_LABELS: Record<MoiOccasionType, string> = {
+  marriage: 'Marriage',
+  engagement: 'Engagement',
+  housewarming: 'Housewarming',
+  ear_piercing: 'Ear-piercing',
+  baby_shower: 'Baby shower',
+  puberty_ceremony: 'Puberty ceremony',
+  funeral: 'Funeral',
+  birthday: 'Birthday',
+  other: 'Other',
+};

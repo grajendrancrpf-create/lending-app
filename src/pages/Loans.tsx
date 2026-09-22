@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLoans, useLedger } from '../hooks/useData';
 import { loanStats } from '../lib/portfolio';
-import { inr, fmtDate, fmtPhone } from '../lib/format';
+import { inr, fmtDate } from '../lib/format';
 import { LOAN_TYPE_LABELS } from '../types';
-import { Page, Spinner, Empty, StatusBadge } from '../components/ui';
+import { Page, Avatar, Empty, StatusBadge, SegmentedControl, SkeletonList, Icon, ICONS } from '../components/ui';
 
-type Filter = 'all' | 'active' | 'closed';
+type Filter = 'active' | 'all' | 'closed';
 
 export default function Loans() {
   const { loans, loading } = useLoans();
@@ -27,47 +27,51 @@ export default function Loans() {
     });
   }, [loans, query, filter]);
 
+  const activeCount = loans.filter((l) => l.status === 'active').length;
+
   return (
     <Page
+      eyebrow="Ledger"
       title="Loans"
-      subtitle={`${loans.filter((l) => l.status === 'active').length} active`}
+      subtitle={`${activeCount} active · ${loans.length - activeCount} closed`}
       right={
         <Link to="/loans/new" className="btn primary sm">
-          + New
+          <Icon d={ICONS.plus} size={16} /> New
         </Link>
       }
     >
       <div className="search-row">
+        <Icon d={ICONS.search} size={18} />
         <input
           className="search"
           placeholder="Search name, phone, notes…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search loans"
         />
       </div>
-      <div className="filter-tabs" role="tablist">
-        {(['active', 'all', 'closed'] as Filter[]).map((f) => (
-          <button
-            key={f}
-            role="tab"
-            aria-selected={filter === f}
-            className={`filter-tab${filter === f ? ' active' : ''}`}
-            onClick={() => setFilter(f)}
-          >
-            {f[0].toUpperCase() + f.slice(1)}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl<Filter>
+        ariaLabel="Filter loans"
+        value={filter}
+        onChange={setFilter}
+        options={[
+          { value: 'active', label: 'Active' },
+          { value: 'all', label: 'All' },
+          { value: 'closed', label: 'Closed' },
+        ]}
+      />
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : filtered.length === 0 ? (
         <Empty
-          text={query ? 'No loans match your search.' : 'No loans in this view yet.'}
+          illo={query ? 'search' : 'loans'}
+          title={query ? 'No matches found' : filter === 'closed' ? 'No closed loans' : 'No loans yet'}
+          text={query ? `Nothing matches “${query}”. Try a different name or phone number.` : 'Add a loan to start tracking repayments and interest.'}
           action={
             !query ? (
               <Link to="/loans/new" className="btn primary">
-                Add a loan
+                <Icon d={ICONS.plus} /> Add a loan
               </Link>
             ) : undefined
           }
@@ -76,23 +80,30 @@ export default function Loans() {
         <div className="loan-list">
           {filtered.map((loan) => {
             const s = loanStats(loan, entries);
+            const principalNum = Number(loan.principal) || 0;
+            const repaidPct = principalNum > 0 ? Math.min(100, (s.principalPaid / principalNum) * 100) : 0;
             return (
               <Link key={loan.id} to={`/loans/${loan.id}`} className="loan-row">
+                <Avatar name={loan.client_name} />
                 <div className="loan-row-main">
                   <div className="loan-row-top">
                     <b>{loan.client_name}</b>
-                    <StatusBadge status={loan.status} />
+                    {filter === 'all' && <StatusBadge status={loan.status} />}
                   </div>
-                  <div className="loan-row-sub muted">
-                    {LOAN_TYPE_LABELS[loan.loan_type]} · {inr(loan.principal)} · {fmtPhone(loan.phone)}
+                  <div className="loan-row-sub">
+                    {LOAN_TYPE_LABELS[loan.loan_type]} · {inr(loan.principal)}
                   </div>
-                  <div className="loan-row-sub muted small">
+                  <div className="loan-row-sub small muted" style={{ marginTop: 2 }}>
                     Disbursed {fmtDate(loan.disbursement_date)}
-                    {loan.emi_amount ? ` · EMI ${inr(loan.emi_amount)}` : ''}
                   </div>
+                  {loan.status === 'active' && (
+                    <div className="pbar" aria-hidden>
+                      <i style={{ width: `${repaidPct}%` }} />
+                    </div>
+                  )}
                 </div>
                 <div className="loan-row-amt">
-                  <span className="muted small">Outstanding</span>
+                  <span className="k">Outstanding</span>
                   <b>{inr(s.outstanding)}</b>
                 </div>
               </Link>

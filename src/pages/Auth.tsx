@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Field } from '../components/ui';
 
 export default function Auth() {
   const { signIn, signUp } = useAuth();
@@ -39,13 +40,19 @@ export default function Auth() {
   if (checkMail) {
     return (
       <div className="auth-wrap">
+        <AuthBrand />
         <div className="auth-card">
-          <div className="brand">₹</div>
-          <h1>Check your inbox</h1>
-          <p className="muted">
+          <h2>Check your inbox</h2>
+          <p className="sub">
             We sent a confirmation link to <b>{email}</b>. Tap it, then sign in here.
           </p>
-          <button className="btn primary block" onClick={() => { setCheckMail(false); setMode('signin'); }}>
+          <button
+            className="btn primary block"
+            onClick={() => {
+              setCheckMail(false);
+              setMode('signin');
+            }}
+          >
             Back to sign in
           </button>
         </div>
@@ -55,64 +62,63 @@ export default function Auth() {
 
   return (
     <div className="auth-wrap">
-      <form className="auth-card" onSubmit={submit}>
-        <div className="brand">₹</div>
-        <h1>{mode === 'signin' ? 'Welcome back' : 'Create your account'}</h1>
-        <p className="muted">LendTrack — lending manager for Indian lenders</p>
-
-        {mode === 'signup' && (
-          <label className="field">
-            <span>Full name</span>
+      <AuthBrand />
+      <div className="auth-card">
+        <h2>{mode === 'signin' ? 'Welcome back' : 'Create your account'}</h2>
+        <p className="sub">
+          {mode === 'signin'
+            ? 'Sign in to open your lending ledger.'
+            : 'Your private ledger is a minute away.'}
+        </p>
+        <form onSubmit={submit}>
+          {mode === 'signup' && (
+            <Field label="Full name">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Priya Sharma"
+                autoComplete="name"
+              />
+            </Field>
+          )}
+          <Field label="Email">
             <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Priya Sharma"
-              autoComplete="name"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
             />
-          </label>
-        )}
-        <label className="field">
-          <span>Email</span>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-          />
-        </label>
-        <label className="field">
-          <span>Password</span>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={mode === 'signup' ? 'Min. 6 characters' : 'Your password'}
-            autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-          />
-        </label>
-
-        {error && <p className="form-error">{error}</p>}
-
-        <button className="btn primary block" disabled={busy}>
-          {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Sign up'}
-        </button>
-
+          </Field>
+          <Field label="Password">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === 'signin' ? 'Your password' : 'Choose a strong password'}
+              autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+              required
+              minLength={6}
+            />
+          </Field>
+          {error && <p className="form-error">{error}</p>}
+          <button type="submit" className="btn primary block" disabled={busy}>
+            {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+          </button>
+        </form>
         <p className="switch-mode">
           {mode === 'signin' ? (
             <>
               New here?{' '}
-              <button type="button" className="link" onClick={() => setMode('signup')}>
+              <button className="link" onClick={() => { setMode('signup'); setError(null); }}>
                 Create an account
               </button>
             </>
           ) : (
             <>
               Already have an account?{' '}
-              <button type="button" className="link" onClick={() => setMode('signin')}>
+              <button className="link" onClick={() => { setMode('signin'); setError(null); }}>
                 Sign in
               </button>
             </>
@@ -121,18 +127,21 @@ export default function Auth() {
         <p className="fineprint">
           Secured by Supabase Auth. Your data stays in your own database.
         </p>
-      </form>
+      </div>
     </div>
   );
 }
 
-export function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  if (!user) return <AuthGate />;
-  return <>{children}</>;
+export function AuthGate() {
+  return <Auth />;
 }
 
-function AuthGate() {
-  return <Auth />;
+function AuthBrand() {
+  return (
+    <div className="auth-brand">
+      <div className="brand-mark">₹</div>
+      <h1>LendTrack</h1>
+      <p className="tag">The private lending ledger for Indian lenders — loans, EMIs and interest, beautifully tracked.</p>
+    </div>
+  );
 }

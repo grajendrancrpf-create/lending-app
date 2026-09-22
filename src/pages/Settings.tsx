@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Page, Card } from '../components/ui';
+import { Page, Card, Avatar, Field, Icon, ICONS } from '../components/ui';
 
 export default function Settings() {
   const { user, profile, signOut, refreshProfile } = useAuth();
@@ -31,14 +31,21 @@ export default function Settings() {
   };
 
   return (
-    <Page title="Settings" subtitle={user?.email}>
+    <Page eyebrow="Account" title="Settings" subtitle={user?.email}>
+      <div className="profile-card">
+        <Avatar name={profile?.full_name || user?.email || 'You'} size="lg" />
+        <div>
+          <b>{profile?.full_name || 'Lender'}</b>
+          <span className="muted">{user?.email}</span>
+        </div>
+      </div>
+
       <Card>
         <h3 className="card-title">Profile</h3>
-        <label className="field">
-          <span>Full name</span>
+        <Field label="Full name">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
-        </label>
-        <button className="btn primary" onClick={saveName} disabled={saving}>
+        </Field>
+        <button className="btn primary" onClick={saveName} disabled={saving} style={{ marginTop: 2 }}>
           {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save name'}
         </button>
       </Card>
@@ -46,22 +53,32 @@ export default function Settings() {
       <Card>
         <h3 className="card-title">Tools</h3>
         <Link to="/calculator" className="menu-row">
-          <span>EMI calculator</span>
+          <span className="lbl">
+            <span className="dot-ico" style={{ background: 'var(--brass-100)', color: 'var(--brass-700)' }}>
+              <Icon d={ICONS.calc} size={17} />
+            </span>
+            EMI calculator
+          </span>
           <span className="chev">›</span>
         </Link>
         <Link to="/loans/new" className="menu-row">
-          <span>Add a new loan</span>
+          <span className="lbl">
+            <span className="dot-ico" style={{ background: 'var(--pine-50)', color: 'var(--pine-800)' }}>
+              <Icon d={ICONS.plus} size={17} />
+            </span>
+            Add a new loan
+          </span>
           <span className="chev">›</span>
         </Link>
       </Card>
 
       <Card>
-        <h3 className="card-title">About</h3>
-        <p className="muted small">
-          LendTrack stores your data in your own Supabase project. Amounts use Indian
+        <h3 className="card-title">About LendTrack</h3>
+        <p className="muted small" style={{ margin: '0 0 8px', lineHeight: 1.6 }}>
+          Your data lives in your own Supabase project. Amounts use Indian
           numbering (lakh/crore), dates are DD/MM/YYYY, and phone numbers use +91.
         </p>
-        <p className="muted small">Signed in as {user?.email}</p>
+        <p className="muted small" style={{ margin: 0 }}>Signed in as {user?.email}</p>
       </Card>
 
       <button className="btn danger-ghost block" onClick={logout}>

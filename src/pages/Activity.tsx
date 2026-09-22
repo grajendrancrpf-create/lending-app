@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useActivityFeed } from '../hooks/useData';
 import { inr, fmtDate } from '../lib/format';
 import { ENTRY_TYPE_LABELS, type EntryType } from '../types';
-import { Page, Card, Spinner, Empty, EntryBadge } from '../components/ui';
+import { Page, Empty, SkeletonList, SegmentedControl, EntryLabel, entryDotClass } from '../components/ui';
 
 type Filter = 'all' | EntryType;
 
@@ -19,44 +19,50 @@ export default function Activity() {
   const filters: Filter[] = ['all', 'principal_payment', 'interest_payment', 'disbursement', 'charge', 'adjustment'];
 
   return (
-    <Page title="Activity" subtitle="Latest ledger entries across all loans">
-      <div className="filter-tabs scroll">
-        {filters.map((f) => (
-          <button
-            key={f}
-            className={`filter-tab${filter === f ? ' active' : ''}`}
-            onClick={() => setFilter(f)}
-          >
-            {f === 'all' ? 'All' : ENTRY_TYPE_LABELS[f]}
-          </button>
-        ))}
-      </div>
+    <Page
+      eyebrow="Timeline"
+      title="Activity"
+      subtitle="Latest ledger entries across all loans"
+    >
+      <SegmentedControl<Filter>
+        ariaLabel="Filter activity"
+        scroll
+        value={filter}
+        onChange={setFilter}
+        options={filters.map((f) => ({
+          value: f,
+          label: f === 'all' ? 'All' : ENTRY_TYPE_LABELS[f],
+        }))}
+      />
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : filtered.length === 0 ? (
-        <Empty text="No entries yet. Record a payment or charge from a loan's page." />
+        <Empty
+          illo="activity"
+          title="Nothing here yet"
+          text="Record a payment or charge from a loan's page and it will show up here."
+        />
       ) : (
-        <div className="entry-list">
+        <ul className="timeline">
           {filtered.map((e) => (
-            <Link key={e.id} to={`/loans/${e.loan_id}`} className="entry-link">
-              <Card className="entry-row">
-                <div>
-                  <b className="entry-client">{e.client_name}</b>
+            <li key={e.id} className="tl-item">
+              <span className={`tl-dot ${entryDotClass(e.entry_type)}`} />
+              <Link to={`/loans/${e.loan_id}`} className="tl-card">
+                <div className="tl-top">
                   <div>
-                    <EntryBadge type={e.entry_type} />
+                    <b style={{ fontSize: 15 }}>{e.client_name}</b>
+                    <div style={{ marginTop: 2 }}><EntryLabel type={e.entry_type} /></div>
                   </div>
-                  <div className="muted small">
-                    {fmtDate(e.entry_date)}{e.note ? ` · ${e.note}` : ''}
-                  </div>
+                  <span className={`tl-amt ${e.entry_type === 'principal_payment' || e.entry_type === 'interest_payment' ? 'pos' : ''}`}>
+                    {inr(e.amount)}
+                  </span>
                 </div>
-                <b className={e.entry_type === 'principal_payment' || e.entry_type === 'interest_payment' ? 'pos' : ''}>
-                  {inr(e.amount)}
-                </b>
-              </Card>
-            </Link>
+                <div className="tl-meta">{fmtDate(e.entry_date)}{e.note ? ` · ${e.note}` : ''}</div>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </Page>
   );

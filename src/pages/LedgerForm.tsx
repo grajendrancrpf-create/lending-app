@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLoan } from '../hooks/useData';
 import { todayISO } from '../lib/format';
 import { ENTRY_TYPE_LABELS, type EntryType } from '../types';
-import { Page, Card, Spinner } from '../components/ui';
+import { Page, Card, Field, SegmentedControl, SkeletonList } from '../components/ui';
 
 const ENTRY_TYPES = Object.keys(ENTRY_TYPE_LABELS) as EntryType[];
 
@@ -72,31 +72,29 @@ export default function LedgerForm() {
 
   if (loading) {
     return (
-      <Page title={isEdit ? 'Edit entry' : 'New entry'}>
-        <Spinner />
+      <Page eyebrow="Entry" title={isEdit ? 'Edit entry' : 'New entry'}>
+        <SkeletonList rows={3} />
       </Page>
     );
   }
 
   return (
     <Page
+      eyebrow="Entry"
       title={isEdit ? 'Edit entry' : 'New entry'}
       subtitle={loan ? `For ${loan.client_name}` : undefined}
     >
       <form onSubmit={save}>
         <Card>
-          <label className="field">
-            <span>Entry type *</span>
-            <select value={entryType} onChange={(e) => setEntryType(e.target.value as EntryType)}>
-              {ENTRY_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {ENTRY_TYPE_LABELS[t]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span>Amount (₹) *</span>
+          <span className="field"><span>Entry type *</span></span>
+          <SegmentedControl<EntryType>
+            ariaLabel="Entry type"
+            scroll
+            value={entryType}
+            onChange={setEntryType}
+            options={ENTRY_TYPES.map((t) => ({ value: t, label: ENTRY_TYPE_LABELS[t] }))}
+          />
+          <Field label="Amount (₹) *">
             <input
               type="number"
               min="0"
@@ -106,19 +104,17 @@ export default function LedgerForm() {
               placeholder="5000"
               inputMode="decimal"
             />
-          </label>
-          <label className="field">
-            <span>Date *</span>
+          </Field>
+          <Field label="Date *">
             <input type="date" value={entryDate} onChange={(e) => setEntryDate(e.target.value)} />
-          </label>
-          <label className="field">
-            <span>Note</span>
+          </Field>
+          <Field label="Note">
             <input
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. UPI payment, cash received…"
             />
-          </label>
+          </Field>
           {entryType === 'adjustment' && (
             <p className="hint">
               Adjustments are signed: use a negative amount to reduce the outstanding principal, positive to increase it.

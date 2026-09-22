@@ -11,7 +11,7 @@ import {
   type LoanType,
   type RateType,
 } from '../types';
-import { Page, Card, Spinner } from '../components/ui';
+import { Page, Card, Field, SegmentedControl, SkeletonList } from '../components/ui';
 
 const LOAN_TYPES = Object.keys(LOAN_TYPE_LABELS) as LoanType[];
 const RATE_TYPES = Object.keys(RATE_TYPE_LABELS) as RateType[];
@@ -121,23 +121,25 @@ export default function LoanForm() {
 
   if (isEdit && loading) {
     return (
-      <Page title="Edit loan">
-        <Spinner />
+      <Page eyebrow="Loan" title="Edit loan">
+        <SkeletonList rows={4} />
       </Page>
     );
   }
 
   return (
-    <Page title={isEdit ? 'Edit loan' : 'New loan'} subtitle={isEdit ? loan?.client_name : 'Enter the loan details'}>
+    <Page
+      eyebrow={isEdit ? 'Edit' : 'New'}
+      title={isEdit ? 'Edit loan' : 'New loan'}
+      subtitle={isEdit ? loan?.client_name : 'Enter the loan details'}
+    >
       <form onSubmit={save}>
         <Card>
-          <label className="field">
-            <span>Client name *</span>
+          <Field label="Client name *">
             <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="e.g. Rajesh Kumar" />
-          </label>
+          </Field>
           <div className="grid2">
-            <label className="field">
-              <span>Phone</span>
+            <Field label="Phone">
               <div className="phone-wrap">
                 <span className="phone-prefix">+91</span>
                 <input
@@ -148,9 +150,8 @@ export default function LoanForm() {
                   maxLength={12}
                 />
               </div>
-            </label>
-            <label className="field">
-              <span>PAN (optional)</span>
+            </Field>
+            <Field label="PAN (optional)">
               <input
                 value={pan}
                 onChange={(e) => setPan(e.target.value.toUpperCase())}
@@ -158,23 +159,20 @@ export default function LoanForm() {
                 maxLength={10}
                 style={{ textTransform: 'uppercase' }}
               />
-            </label>
+            </Field>
           </div>
-          <label className="field">
-            <span>Loan type</span>
-            <select value={loanType} onChange={(e) => setLoanType(e.target.value as LoanType)}>
-              {LOAN_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {LOAN_TYPE_LABELS[t]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <span className="field"><span>Loan type</span></span>
+          <SegmentedControl<LoanType>
+            ariaLabel="Loan type"
+            scroll
+            value={loanType}
+            onChange={setLoanType}
+            options={LOAN_TYPES.map((t) => ({ value: t, label: LOAN_TYPE_LABELS[t] }))}
+          />
         </Card>
 
         <Card>
-          <label className="field">
-            <span>Principal (₹) *</span>
+          <Field label="Principal (₹) *">
             <input
               type="number"
               min="0"
@@ -184,10 +182,9 @@ export default function LoanForm() {
               placeholder="100000"
               inputMode="decimal"
             />
-          </label>
+          </Field>
           <div className="grid2">
-            <label className="field">
-              <span>Interest rate *</span>
+            <Field label="Interest rate *">
               <input
                 type="number"
                 min="0"
@@ -197,25 +194,8 @@ export default function LoanForm() {
                 placeholder="2"
                 inputMode="decimal"
               />
-            </label>
-            <label className="field">
-              <span>Rate type</span>
-              <select value={rateType} onChange={(e) => setRateType(e.target.value as RateType)}>
-                {RATE_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {RATE_TYPE_LABELS[t]}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div className="grid2">
-            <label className="field">
-              <span>Disbursement date</span>
-              <input type="date" value={disbDate} onChange={(e) => setDisbDate(e.target.value)} />
-            </label>
-            <label className="field">
-              <span>Tenure (months)</span>
+            </Field>
+            <Field label="Tenure (months)">
               <input
                 type="number"
                 min="1"
@@ -224,8 +204,18 @@ export default function LoanForm() {
                 onChange={(e) => setTenure(e.target.value)}
                 inputMode="numeric"
               />
-            </label>
+            </Field>
           </div>
+          <span className="field"><span>Rate type</span></span>
+          <SegmentedControl<RateType>
+            ariaLabel="Rate type"
+            value={rateType}
+            onChange={setRateType}
+            options={RATE_TYPES.map((t) => ({ value: t, label: RATE_TYPE_LABELS[t] }))}
+          />
+          <Field label="Disbursement date">
+            <input type="date" value={disbDate} onChange={(e) => setDisbDate(e.target.value)} />
+          </Field>
 
           <label className="toggle-row">
             <span>
@@ -245,33 +235,32 @@ export default function LoanForm() {
           {emiOn && emiPreview > 0 && (
             <div className="emi-preview">
               Monthly EMI <b>{inr(emiPreview)}</b>
-              <small className="muted">
-                {' '}
-                · {tenureNum} months · total {inr(emiPreview * tenureNum)}
-              </small>
+              <div className="muted small" style={{ marginTop: 2 }}>
+                {tenureNum} months · total {inr(emiPreview * tenureNum)}
+              </div>
             </div>
           )}
         </Card>
 
         <Card>
-          <div className="grid2">
-            <label className="field">
-              <span>Status</span>
-              <select value={status} onChange={(e) => setStatus(e.target.value as 'active' | 'closed')}>
-                <option value="active">Active</option>
-                <option value="closed">Closed</option>
-              </select>
-            </label>
-          </div>
-          <label className="field">
-            <span>Notes / reference</span>
+          <span className="field"><span>Status</span></span>
+          <SegmentedControl<'active' | 'closed'>
+            ariaLabel="Loan status"
+            value={status}
+            onChange={setStatus}
+            options={[
+              { value: 'active', label: 'Active' },
+              { value: 'closed', label: 'Closed' },
+            ]}
+          />
+          <Field label="Notes / reference">
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Reference number, guarantor, remarks…"
               rows={3}
             />
-          </label>
+          </Field>
         </Card>
 
         {error && <p className="form-error">{error}</p>}

@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 const TABS = [
   { to: '/', label: 'Home', end: true, icon: HomeIcon },
   { to: '/loans', label: 'Loans', icon: LoansIcon },
-  { to: '/loans/new', label: 'Add', icon: AddIcon },
   { to: '/activity', label: 'Activity', icon: ActivityIcon },
   { to: '/settings', label: 'Settings', icon: SettingsIcon },
 ];
@@ -11,18 +10,27 @@ const TABS = [
 export default function BottomNav() {
   return (
     <nav className="bottom-nav" aria-label="Primary">
-      {TABS.map(({ to, label, end, icon: Icon }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={end}
-          className={({ isActive }) => `tab${isActive ? ' active' : ''}`}
-        >
-          <Icon />
-          <span>{label}</span>
-        </NavLink>
+      {TABS.slice(0, 2).map(({ to, label, end, icon: Icon }) => (
+        <Tab key={to} to={to} label={label} end={end} Icon={Icon} />
+      ))}
+      <NavLink to="/loans/new" className="tab-fab" aria-label="Add a new loan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </NavLink>
+      {TABS.slice(2).map(({ to, label, end, icon: Icon }) => (
+        <Tab key={to} to={to} label={label} end={end} Icon={Icon} />
       ))}
     </nav>
+  );
+}
+
+function Tab({ to, label, end, Icon }: { to: string; label: string; end?: boolean; Icon: () => JSX.Element }) {
+  return (
+    <NavLink to={to} end={end} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>
+      <Icon />
+      <span>{label}</span>
+    </NavLink>
   );
 }
 
@@ -41,14 +49,6 @@ function LoansIcon() {
       <rect x="3" y="6" width="18" height="13" rx="2.5" />
       <path d="M3 10.5h18" />
       <path d="M7 15h4" />
-    </svg>
-  );
-}
-function AddIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 8.5v7M8.5 12h7" />
     </svg>
   );
 }

@@ -44,7 +44,15 @@ export function SectionHead({ title, action }: { title: string; action?: ReactNo
 }
 
 /* ---------------- avatar ---------------- */
-const AVATAR_HUES = ['#6366f1', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f59e0b', '#ef4444'];
+const AVATAR_HUES = [
+  ['#ffffff', '#a8a8b0'],
+  ['#f4f4f5', '#8e8e96'],
+  ['#e4e4e7', '#71717a'],
+  ['#d4d4d8', '#5b5b63'],
+  ['#fafafa', '#9a9aa2'],
+  ['#ececee', '#6e6e76'],
+  ['#ffffff', '#7a7a82'],
+];
 
 export function Avatar({ name, size = '' }: { name: string; size?: string }) {
   const initials = name
@@ -58,7 +66,7 @@ export function Avatar({ name, size = '' }: { name: string; size?: string }) {
   for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const bg = AVATAR_HUES[h % AVATAR_HUES.length];
   return (
-    <span className={`avatar ${size}`} style={{ background: `linear-gradient(150deg, ${bg}, ${bg}cc)` }} aria-hidden>
+    <span className={`avatar ${size}`} style={{ background: `linear-gradient(150deg, ${bg[0]}, ${bg[1]})` }} aria-hidden>
       {initials || '–'}
     </span>
   );
@@ -84,12 +92,12 @@ export function ProgressRing({ pct, size = 92 }: { pct: number; size?: number })
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - (c * clamped) / 100}
-          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.22,0.9,0.3,1)', filter: 'drop-shadow(0 0 6px rgba(34,211,238,0.5))' }}
+          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.22,0.9,0.3,1)', filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.45))' }}
         />
         <defs>
           <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#c084fc" />
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#8e8e96" />
           </linearGradient>
         </defs>
       </svg>

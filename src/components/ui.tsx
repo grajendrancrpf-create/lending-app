@@ -44,7 +44,7 @@ export function SectionHead({ title, action }: { title: string; action?: ReactNo
 }
 
 /* ---------------- avatar ---------------- */
-const AVATAR_HUES = ['#2F5D50', '#7A4E2D', '#8A6D1F', '#5D4A7A', '#A34A3A', '#3A6EA5', '#6B4E71'];
+const AVATAR_HUES = ['#6366f1', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f59e0b', '#ef4444'];
 
 export function Avatar({ name, size = '' }: { name: string; size?: string }) {
   const initials = name
@@ -73,7 +73,7 @@ export function ProgressRing({ pct, size = 92 }: { pct: number; size?: number })
   return (
     <span className="ring-wrap" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--paper-deep)" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth={stroke} />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -84,12 +84,12 @@ export function ProgressRing({ pct, size = 92 }: { pct: number; size?: number })
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - (c * clamped) / 100}
-          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.22,0.9,0.3,1)' }}
+          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.22,0.9,0.3,1)', filter: 'drop-shadow(0 0 6px rgba(34,211,238,0.5))' }}
         />
         <defs>
           <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="var(--pine-700)" />
-            <stop offset="100%" stopColor="var(--brass-500)" />
+            <stop offset="0%" stopColor="#22d3ee" />
+            <stop offset="100%" stopColor="#c084fc" />
           </linearGradient>
         </defs>
       </svg>

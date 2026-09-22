@@ -36,10 +36,19 @@ function SetupNotice() {
 
 function Shell() {
   return (
-    <div className="app-shell">
-      <Outlet />
-      <BottomNav />
-    </div>
+    <>
+      <div className="aurora" aria-hidden>
+        <i className="b1" />
+        <i className="b2" />
+        <i className="b3" />
+        <i className="b4" />
+        <i className="b5" />
+      </div>
+      <div className="app-shell">
+        <Outlet />
+        <BottomNav />
+      </div>
+    </>
   );
 }
 

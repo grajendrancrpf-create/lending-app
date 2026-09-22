@@ -68,19 +68,19 @@ export default function Dashboard() {
           {/* quick actions */}
           <div className="quick-actions">
             <Link to="/loans/new" className="quick-action">
-              <span className="dot-ico" style={{ background: 'var(--pine-50)', color: 'var(--pine-800)' }}>
+              <span className="dot-ico tint-cyan">
                 <Icon d={ICONS.plus} />
               </span>
               New loan
             </Link>
             <Link to="/loans" className="quick-action">
-              <span className="dot-ico" style={{ background: 'var(--pos-bg)', color: 'var(--pos)' }}>
+              <span className="dot-ico tint-emerald">
                 <Icon d={ICONS.arrowUp} />
               </span>
               Record payment
             </Link>
             <Link to="/calculator" className="quick-action">
-              <span className="dot-ico" style={{ background: 'var(--brass-100)', color: 'var(--brass-700)' }}>
+              <span className="dot-ico tint-amber">
                 <Icon d={ICONS.calc} />
               </span>
               EMI calculator
@@ -92,7 +92,7 @@ export default function Dashboard() {
           <Card>
             <div className="stat-row">
               <span className="lbl">
-                <span className="dot-ico" style={{ background: 'var(--warn-bg)', color: 'var(--warn)' }}>
+                <span className="dot-ico tint-amber">
                   <Icon d={ICONS.clock} size={17} />
                 </span>
                 <span>Interest due<span className="sub">Yet to be collected</span></span>
@@ -101,7 +101,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-row">
               <span className="lbl">
-                <span className="dot-ico" style={{ background: 'var(--pos-bg)', color: 'var(--pos)' }}>
+                <span className="dot-ico tint-emerald">
                   <Icon d={ICONS.trend} size={17} />
                 </span>
                 <span>Interest collected<span className="sub">Earnings so far</span></span>
@@ -110,7 +110,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-row">
               <span className="lbl">
-                <span className="dot-ico" style={{ background: 'var(--paper-deep)', color: 'var(--ink-2)' }}>
+                <span className="dot-ico tint-white">
                   <Icon d={ICONS.wallet} size={17} />
                 </span>
                 <span>Charges & fees</span>
@@ -119,7 +119,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-row">
               <span className="lbl">
-                <span className="dot-ico" style={{ background: 'var(--pine-50)', color: 'var(--pine-800)' }}>
+                <span className="dot-ico tint-cyan">
                   <Icon d={ICONS.check} size={17} />
                 </span>
                 <span>Closed loans</span>

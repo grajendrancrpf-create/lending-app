@@ -54,7 +54,7 @@ export default function Settings() {
         <h3 className="card-title">Tools</h3>
         <Link to="/calculator" className="menu-row">
           <span className="lbl">
-            <span className="dot-ico" style={{ background: 'var(--brass-100)', color: 'var(--brass-700)' }}>
+            <span className="dot-ico tint-amber">
               <Icon d={ICONS.calc} size={17} />
             </span>
             EMI calculator
@@ -63,7 +63,7 @@ export default function Settings() {
         </Link>
         <Link to="/loans/new" className="menu-row">
           <span className="lbl">
-            <span className="dot-ico" style={{ background: 'var(--pine-50)', color: 'var(--pine-800)' }}>
+            <span className="dot-ico tint-cyan">
               <Icon d={ICONS.plus} size={17} />
             </span>
             Add a new loan
